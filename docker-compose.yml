@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  unifi-poe-server:
+    container_name: unifi-poe-server
+    image: miogs/unifi-poe-server:latest
+    ports:
+      - 3000:3000
+    environment:
+      - UNIFI_POE_USERNAME=<admin username>
+      - UNIFI_POE_PASSWORD=<password>
+      - UNIFI_POE_URL=https://<controller url>
+    volumes:
+      - ./credentials.json:/credentials.json
+    restart: unless-stopped
