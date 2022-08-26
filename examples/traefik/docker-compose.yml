@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  app:
+    image: miogs/unifi-poe-server:latest
+    environment:
+      - UNIFI_POE_USERNAME=<admin user>
+      - UNIFI_POE_PASSWORD=<password>
+      - UNIFI_POE_URL=https://<controller url>
+    networks:
+      - traefik_net
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        reservations:
+          memory: 32M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.middlewares.unifi-poe-server.addprefix.prefix=/unifi-poe"
+        - "traefik.http.routers.unifi-poe-server.rule=Host(`unifi-poe.yourdomain.com`)"
+        - "traefik.http.routers.unifi-poe-server.entrypoints=https"
+        - "traefik.http.routers.unifi-poe-server.tls=true"
+        - "traefik.http.routers.unifi-poe-server.service=unifi-poe-server"
+        - "traefik.http.routers.unifi-poe-server.middlewares=unifi-poe-server"
+        - "traefik.http.services.unifi-poe-server.loadbalancer.server.port=3000"
+        - "traefik.docker.network=traefik_net"
+
+networks:
+  traefik_net:
+    external: true
